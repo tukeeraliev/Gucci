@@ -1,5 +1,8 @@
+import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.logevents.SelenideLogger;
+import com.gucci.config.AppConfig;
+import com.gucci.config.ConfigurationManager;
 import com.gucci.layers.web.manager.WebDriverManager;
 import com.gucci.layers.web.page.home.HomePage;
 import io.qameta.allure.selenide.AllureSelenide;
@@ -9,6 +12,13 @@ import org.junit.jupiter.api.BeforeAll;
 import static com.gucci.config.ConfigurationManager.getAppConfig;
 
 public class BaseWebTest {
+
+    static {
+        AppConfig config = ConfigurationManager.getAppConfig();
+
+        Configuration.baseUrl = config.baseUrl();
+        Configuration.headless = config.headless();
+    }
 
 private final String BASE_URL = getAppConfig().baseUrl();
     public <T> T open(String endPoint, Class<T> clazz){

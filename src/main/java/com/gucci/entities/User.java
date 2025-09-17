@@ -31,4 +31,7 @@ public class User {
     String zipcode;
     String city;
     String mobileNumber;
+    String contactSubject;
+    String contactMessage;
+    String contactFilePath;
 }

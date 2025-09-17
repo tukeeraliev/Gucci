@@ -77,4 +77,10 @@ public class LoginPage extends BasePage <LoginPage> {
         emailAddressAlreadyExistTextHeader.shouldHave(Condition.exactText("Email Address already exist!"));
         return this;
     }
+
+    @Step("Verify login page is loaded")
+    public LoginPage verifyLoginPageHeaderIsVisible(){
+        loginToYourAccountHeader.shouldHave(Condition.exactText("Login to your account"));
+        return this;
+    }
 }

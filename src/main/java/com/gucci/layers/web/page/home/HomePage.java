@@ -5,6 +5,8 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.gucci.layers.web.page.BasePage;
+import com.gucci.layers.web.page.selections.ContactUsPage;
+import com.gucci.layers.web.page.selections.TestCasesPage;
 import com.gucci.layers.web.page.signup_login.DeletedAccountPage;
 import com.gucci.layers.web.page.signup_login.LoginPage;
 import io.qameta.allure.Step;
@@ -65,7 +67,7 @@ public class HomePage extends BasePage <HomePage> {
     }
 
     @Step("Verify that Logged in as user name is visible {0}")
-    public HomePage veryLoggedInAsUsername(String user){
+    public HomePage verifyLoggedInAsUsername(String user){
         loggedInAsUsernameIsVisible.shouldHave(Condition.text("Logged in as " + user));
         return this;
     }
@@ -80,5 +82,17 @@ public class HomePage extends BasePage <HomePage> {
     public LoginPage clickLogoutBtn(){
         elementManager.click(logoutBtn);
         return Selenide.page(LoginPage.class);
+    }
+
+    @Step("click sign up/login button")
+    public ContactUsPage clickContactUsBth(){
+        elementManager.click(contactUsBtn);
+        return Selenide.page(ContactUsPage.class);
+    }
+
+    @Step("click Test Cases button {0}")
+    public TestCasesPage clickTestCasesBtn(){
+        elementManager.click(testCasesBtn);
+        return Selenide.page(TestCasesPage.class);
     }
 }
