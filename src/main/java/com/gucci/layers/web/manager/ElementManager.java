@@ -2,10 +2,14 @@ package com.gucci.layers.web.manager;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 
+import java.sql.DriverManager;
 import java.time.Duration;
 
 import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 public class ElementManager {
     private final int DELAY = 30;
@@ -56,6 +60,15 @@ public class ElementManager {
                 .shouldBe(visible, Duration.ofSeconds(DELAY))
                 .selectOption(text);
         return this;
+    }
+
+    public void hoverOver(SelenideElement element) {
+        element.shouldBe(Condition.visible).hover();
+    }
+
+    public void jsClick(SelenideElement element) {
+        JavascriptExecutor js = (JavascriptExecutor) getWebDriver();
+        js.executeScript("arguments[0].click();", element);
     }
 
 }

@@ -5,11 +5,14 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.gucci.layers.web.page.BasePage;
+import com.gucci.layers.web.page.selections.CartPage;
 import com.gucci.layers.web.page.selections.ContactUsPage;
+import com.gucci.layers.web.page.products_page.ProductsPage;
 import com.gucci.layers.web.page.selections.TestCasesPage;
 import com.gucci.layers.web.page.signup_login.DeletedAccountPage;
 import com.gucci.layers.web.page.signup_login.LoginPage;
 import io.qameta.allure.Step;
+import org.assertj.core.api.SoftAssertions;
 import org.openqa.selenium.By;
 
 import java.util.ArrayList;
@@ -38,11 +41,50 @@ public class HomePage extends BasePage <HomePage> {
     public SelenideElement subscribeEmailBtn = $("#subscribe");
     public SelenideElement subscribedAlert = $x("//div[@class='alert-success alert']");
     public SelenideElement cart = $x("//a[@href='/view_cart']/i");
+   public SelenideElement footer = $("footer");
+
 
     @Override
     public HomePage waitForPageLoaded() {
         homeOrange.shouldHave(Condition.attribute("style", "color: orange;"));
         return this;
+    }
+
+    @Step("Click cart page")
+    public CartPage clickCartBtn(){
+        elementManager.click(cart);
+        return Selenide.page(CartPage.class);
+    }
+
+    @Step("Verify success subscription message is visible")
+    public HomePage verifySubscriptionSuccessMessage(SoftAssertions softly) {
+        subscribedAlert.should(Condition.appear); // ждёт пока появится
+        softly.assertThat(subscribedAlert.getText())
+                .as("Success message")
+                .contains("You have been successfully subscribed!");
+        subscribedAlert.should(Condition.disappear); // ждёт пока исчезнет
+        return this;
+    }
+
+    @Step("Verify subscription text is visible")
+    public HomePage verifySubscriptionTextIsVisible(SoftAssertions softly) {
+        softly.assertThat(subscriptionHeader.isDisplayed())
+                .as("Subscription text should be visible")
+                .isTrue();
+        return this;
+    }
+
+    @Step("Input email address {0} click arrow button {1}")
+    public HomePage inputEmailAndClickArrow(String email) {
+        elementManager.input(subscribeEmailInput, email);
+        elementManager.click(subscribeEmailBtn);
+        return this;
+    }
+
+    @Step("Click products button")
+    public ProductsPage clickProductsBtn(){
+        elementManager.click(productsBtn);
+        return Selenide.page(ProductsPage.class);
     }
 
     @Step("click sign up/login button")
@@ -64,6 +106,12 @@ public class HomePage extends BasePage <HomePage> {
             brandsList.add(elementManager.getText(element));
         }
         return brandsList;
+    }
+
+    @Step("Scroll to footer")
+    public HomePage scrollToFooter() {
+        footer.scrollTo();
+        return this;
     }
 
     @Step("Verify that Logged in as user name is visible {0}")

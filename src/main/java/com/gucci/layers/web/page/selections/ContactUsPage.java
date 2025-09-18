@@ -24,7 +24,7 @@ public class ContactUsPage extends BasePage <ContactUsPage> {
 
     @Override
     public ContactUsPage waitForPageLoaded() {
-        return null;
+        return this;
     }
 
     public void uploadFile(String filePath) {

@@ -13,7 +13,7 @@ public class TestCasesPage extends BasePage <TestCasesPage> {
 
     @Override
     public TestCasesPage waitForPageLoaded() {
-        return null;
+        return this;
     }
 
     @Step("Test Cses text is visible")
