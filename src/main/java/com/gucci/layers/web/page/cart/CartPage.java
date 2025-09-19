@@ -21,15 +21,49 @@ public class CartPage extends BasePage <CartPage> {
     public SelenideElement subscribedAlert = $x("//div[@class='alert-success alert']");
     public SelenideElement proceedToCheckoutBtn = $x("//a[text()='Proceed To Checkout']");
     public SelenideElement registerLoginBtn = $x("//u[text()='Register / Login']");
+    public SelenideElement signupLoginBtn = $x("//a[@href='/login']");
+
+    @Step("Verify product '{productName}' is displayed in cart page")
+    public CartPage verifyProductDisplayedInCart(String productName) {
+        $$(".cart_description h4 a")
+                .findBy(Condition.exactText(productName))
+                .shouldBe(Condition.visible);
+        return this;
+    }
+
+    @Step("click sign up/login button")
+    public LoginPage clickSignupLoginBth(){
+        elementManager.click(signupLoginBtn);
+        return Selenide.page(LoginPage.class);
+    }
+
+    @Step("Click 'X' button to remove product with id {0}")
+    public CartPage removeProductById(String productId) {
+        SelenideElement removeBtn = $x("//tr[@id='product-" + productId + "']//a[contains(@class,'cart_quantity_delete')]");
+        elementManager.click(removeBtn);
+        return this;
+    }
+
+    @Step("Verify product with id {0} is removed from the cart")
+    public CartPage verifyProductRemoved(String productId) {
+        $x("//tr[@id='product-" + productId + "']").shouldNot(Condition.exist);
+        return this;
+    }
 
     @Step("Verify all products in cart match selected ones")
     public CartPage verifyCartMatchesContext() {
         for (CartProduct product : CardContext.getAddedProducts()) {
             SelenideElement row = $x("//tr[@id='product-" + product.getId() + "']");
-            row.$(".cart_description h4 a").shouldHave(Condition.exactText(product.getName()));
-            row.$(".cart_price p").shouldHave(Condition.exactText(product.getPrice()));
-            row.$(".cart_quantity button").shouldHave(Condition.exactText(product.getQuantity()));
-            row.$(".cart_total_price").shouldHave(Condition.exactText(product.getTotal()));
+
+            row.$(".cart_description h4 a")
+                    .shouldHave(Condition.exactText(product.getName()));
+            row.$(".cart_price p")
+                    .shouldHave(Condition.exactText("Rs. " + product.getPrice()));
+            row.$(".cart_quantity button")
+                    .shouldHave(Condition.exactText(product.getQuantity()));
+            row.$(".cart_total_price")
+                    .shouldHave(Condition.exactText("Rs. " +
+                            (Integer.parseInt(product.getPrice()) * Integer.parseInt(product.getQuantity()))));
         }
         return this;
     }

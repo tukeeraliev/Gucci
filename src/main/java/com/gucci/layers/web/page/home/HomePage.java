@@ -6,6 +6,7 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.gucci.context.CardContext;
 import com.gucci.entities.CartProduct;
+import com.gucci.enums.Brand;
 import com.gucci.layers.web.page.BasePage;
 import com.gucci.layers.web.page.products.ProductsDetailsPage;
 import com.gucci.layers.web.page.cart.CartPage;
@@ -47,6 +48,8 @@ public class HomePage extends BasePage <HomePage> {
     public SelenideElement cart = $x("//a[@href='/view_cart']/i");
    public SelenideElement footer = $("footer");
    public SelenideElement productDetailsBtn = $x("(//a[text()='View Product'])[1]");
+    public SelenideElement categoriesSidebar = $x("//div[@id='accordian']");
+    public SelenideElement recommendedItemsHeader = $x("//h2[text()='recommended items']");
 
 
     @Override
@@ -55,7 +58,20 @@ public class HomePage extends BasePage <HomePage> {
         return this;
     }
 
-    public ProductsDetailsPage clickViewProductByName() {
+    @Step("Scroll to recommended items and verify its visible")
+    public HomePage verifyRecommendedListIsVisible(){
+        elementManager.scrollToElement(recommendedItemsHeader);
+        recommendedItemsHeader.shouldHave(Condition.exactText("recommended items"));
+        return this;
+    }
+
+    @Step("Verify categories sidebar visible")
+    public CategoryPage verifyCategoriesSidebarVisible() {
+        categoriesSidebar.shouldBe(Condition.visible);
+        return page(CategoryPage.class);
+    }
+
+    public ProductsDetailsPage clickViewProductDetails() {
         elementManager.click(productDetailsBtn);
         return Selenide.page(ProductsDetailsPage.class);
     }
@@ -89,6 +105,13 @@ public class HomePage extends BasePage <HomePage> {
         SelenideElement continueBtn = $x("//button[text()='Continue Shopping']");
         elementManager.click(continueBtn);
         return this;
+    }
+
+    @Step("Click view cart page")
+    public CartPage clickViewCartBtn(){
+        SelenideElement viewCartBtn = $("div#cartModal.show a[href='/view_cart']");
+        elementManager.click(viewCartBtn);
+        return Selenide.page(CartPage.class);
     }
 
     @Step("Click cart page")
@@ -149,6 +172,27 @@ public class HomePage extends BasePage <HomePage> {
         return brandsList;
     }
 
+    @Step("Click brand by enum {0}")
+    public ProductsPage clickBrand(Brand brand) {
+        SelenideElement brandElement = brands.findBy(Condition.text(brand.getName())).$("a");
+        elementManager.click(brandElement);
+        return Selenide.page(ProductsPage.class);
+    }
+
+    @Step("Click brand by name {0}")
+    public ProductsPage clickBrandByName(String brandName) {
+        SelenideElement brandElement = brands.findBy(Condition.text(brandName)).$("a");
+        elementManager.click(brandElement);
+        return Selenide.page(ProductsPage.class);
+    }
+
+    @Step("Click brand by index {0}")
+    public ProductsPage clickBrandByIndex(int index) {
+        SelenideElement brandElement = brands.get(index).$("a");
+        elementManager.click(brandElement);
+        return Selenide.page(ProductsPage.class);
+    }
+
     @Step("Scroll to footer")
     public HomePage scrollToFooter() {
         footer.scrollTo();
@@ -183,5 +227,14 @@ public class HomePage extends BasePage <HomePage> {
     public TestCasesPage clickTestCasesBtn(){
         elementManager.click(testCasesBtn);
         return Selenide.page(TestCasesPage.class);
+    }
+
+    @Step("Click 'Add To Cart' on recommended product {productName}")
+    public HomePage clickAddToCartOnRecommended(String productName) {
+        SelenideElement productCard = $$("#recommended-item-carousel .product-image-wrapper")
+                .findBy(Condition.text(productName));
+        elementManager.scrollToElement(productCard);
+        elementManager.click(productCard.$(".add-to-cart"));
+        return this;
     }
 }

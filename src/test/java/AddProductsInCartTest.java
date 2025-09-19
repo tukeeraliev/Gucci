@@ -22,9 +22,9 @@ public class AddProductsInCartTest extends BaseWebTest {
                 .waitForPageLoaded()
                 .clickProductsBtn()
                 .waitForPageLoaded()
-                .hoverAndAddProductById("1")
+                .hoverAndAddProductByName("Blue Top")
                 .clickContinueShoppingBtn()
-                .hoverAndAddProductById("2")
+                .hoverAndAddProductByName("Summer White Top")
                 .clickViewCartBtn()
                 .verifyCartMatchesContext();
     }
@@ -46,11 +46,29 @@ public class AddProductsInCartTest extends BaseWebTest {
 
         open("", HomePage.class)
                 .waitForPageLoaded()
-                .clickViewProductByName()
+                .clickViewProductDetails()
                 .verifyProductDetailsAreVisible(expectedProduct)
                 .increaseProductQuantity("4")
                 .addProductToCart("1", "4")
                 .clickViewCartBtn()
                 .verifyProductQuantity("Blue Top", "4");
+    }
+
+
+    @Test
+    @DisplayName("Remove Products From Cart")
+    @Owner("Tuke")
+    @Tag("TestCase17")
+    public void removeProductFromCartTest(){
+        open("", HomePage.class)
+                .waitForPageLoaded()
+                .hoverAndAddProductById("1")
+                .clickContinueShoppingBtn()
+                .hoverAndAddProductById("4")
+                .clickContinueShoppingBtn()
+                .clickCartBtn()
+                .waitForPageLoaded()
+                .removeProductById("1")
+                .verifyProductRemoved("1");
     }
 }

@@ -3,6 +3,7 @@ package com.gucci.layers.web.page.products;
 import com.codeborne.selenide.*;
 import com.gucci.context.CardContext;
 import com.gucci.entities.CartProduct;
+import com.gucci.enums.Brand;
 import com.gucci.layers.web.page.BasePage;
 import com.gucci.layers.web.page.cart.CartPage;
 import io.qameta.allure.Step;
@@ -15,6 +16,8 @@ public class ProductsPage extends BasePage<ProductsPage> {
     public SelenideElement productsTitle = $x("//h2[@class='title text-center' and normalize-space()='All Products']");
     public SelenideElement productsList = $(".features_items");
     public SelenideElement viewProduct1 = $x("//a[@href='/product_details/1']");
+    public SelenideElement leftSideBar = $(".left-sidebar");
+    public ElementsCollection brands = leftSideBar.$$x(".//div[@class='brands-name']//li");
     public SelenideElement searchInput = $("#search_product");
     public SelenideElement searchBtn = $("#submit_search");
     public SelenideElement searchedProductsHeader = $x("//div[@class='features_items']//h2[contains(normalize-space(.), 'Searched Products')]");
@@ -24,6 +27,34 @@ public class ProductsPage extends BasePage<ProductsPage> {
     @Override
     public ProductsPage waitForPageLoaded() {
         productsList.shouldBe(Condition.visible);
+        return this;
+    }
+
+    @Step("Verify brands section is visible")
+    public ProductsPage verifyBrandTextIsVisible() {
+        SelenideElement brandsHeader = leftSideBar.$x(".//h2[contains(text(),'Brands')]");
+        brandsHeader.shouldBe(Condition.visible).shouldHave(Condition.text("Brands"));
+        return this;
+    }
+
+    @Step("Click brand by enum {0}")
+    public ProductsPage clickBrand(Brand brand) {
+        SelenideElement brandElement = brands.findBy(Condition.text(brand.getName())).$("a");
+        elementManager.click(brandElement);
+        return this;
+    }
+
+    @Step("Click brand by name {0}")
+    public ProductsPage clickBrandByName(String brandName) {
+        SelenideElement brandElement = brands.findBy(Condition.text(brandName)).$("a");
+        elementManager.click(brandElement);
+        return this;
+    }
+
+    @Step("Click brand by index {0}")
+    public ProductsPage clickBrandByIndex(int index) {
+        SelenideElement brandElement = brands.get(index).$("a");
+        elementManager.click(brandElement);
         return this;
     }
 
@@ -41,7 +72,8 @@ public class ProductsPage extends BasePage<ProductsPage> {
     }
 
     @Step("Click view button of 1st product")
-    public ProductsDetailsPage clickViewProduct1() {
+    public ProductsDetailsPage clickViewDetailsProduct1() {
+        elementManager.scrollToElement(viewProduct1);
         elementManager.click(viewProduct1);
         return Selenide.page(ProductsDetailsPage.class);
     }
@@ -59,26 +91,24 @@ public class ProductsPage extends BasePage<ProductsPage> {
         return this;
     }
 
-    @Step("Hover to product with id {0} and add to cart")
-    public ProductsPage hoverAndAddProductById(String productId) {
-        SelenideElement productCard = $x("//div[@class='product-image-wrapper'][.//a[@data-product-id='" + productId + "']]");
+    @Step("Hover and add product by name: {0}")
+    public ProductsPage hoverAndAddProductByName(String productName) {
+        SelenideElement productCard = $$("div.product-image-wrapper")
+                .findBy(Condition.text(productName)); // ищем по названию
 
-        String name = productCard.$("p").getText();
-        String price = productCard.$("h2").getText();
+        productCard.hover();
+        SelenideElement addToCartBtn = productCard.$("a.add-to-cart");
 
-        // по умолчанию quantity = 1, total = price
-        CartProduct product = CartProduct.builder()
-                .id(productId)
-                .name(name)
-                .price(price)
+        elementManager.jsClick(addToCartBtn);// кликаем по кнопке внутри карточки
+
+        // сохраним контекст (для CartPage проверки)
+        CardContext.addProduct(CartProduct.builder()
+                .id(productCard.$("a.add-to-cart").getAttribute("data-product-id"))
+                .name(productName)
+                .price(productCard.$("h2").getText().replace("Rs. ", ""))
                 .quantity("1")
-                .total(price)
-                .build();
-
-        CardContext.addProduct(product);
-
-        elementManager.hoverOver(productCard);
-        elementManager.jsClick(productCard.$("a.add-to-cart"));
+                .build()
+        );
 
         return this;
     }

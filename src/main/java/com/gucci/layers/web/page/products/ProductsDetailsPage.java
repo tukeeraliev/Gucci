@@ -23,6 +23,33 @@ public class ProductsDetailsPage extends BasePage<ProductsDetailsPage> {
     public SelenideElement condition = $x("//div[@class='product-information']//p[b[text()='Condition:']]");
     public SelenideElement brand = $x("//div[@class='product-information']//p[b[text()='Brand:']]");
     public SelenideElement quantityInput = $("#quantity");
+    public SelenideElement writeYourReviewHeader = $x("//a[text()='Write Your Review']");
+    public SelenideElement nameInput = $("#name");
+    public SelenideElement emailInput = $("#email");
+    public SelenideElement reviewInput = $("#review");
+    public SelenideElement submitReviewBtn = $("#button-review");
+    public SelenideElement thankYouHeader = $x("//span[text()='Thank you for your review.']");
+
+    @Step("Fill name {0} fill email {1} fill review {2} click submit button {3}")
+    public ProductsDetailsPage fillAndSubmitReview(){
+        elementManager.input(nameInput, "Tuke")
+                .input(emailInput, "Tuke98@mail.ru")
+                .input(reviewInput, " Happy");
+        elementManager.click(submitReviewBtn);
+        return this;
+    }
+
+    @Step("Verify Thank you message")
+    public ProductsDetailsPage verifyThankYouIsVisible(){
+        thankYouHeader.shouldBe(Condition.visible);
+        return this;
+    }
+
+    @Step("Verify write your review header is visible")
+    public ProductsDetailsPage verifyWriteReviewHeaderIsVisible(){
+        writeYourReviewHeader.shouldHave(Condition.exactText("Write Your Review"));
+        return this;
+    }
 
     @Override
     public ProductsDetailsPage waitForPageLoaded() {

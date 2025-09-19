@@ -71,4 +71,8 @@ public class ElementManager {
         js.executeScript("arguments[0].click();", element);
     }
 
+    public void scrollToElement(SelenideElement element) {
+        element.scrollTo();
+    }
+
 }

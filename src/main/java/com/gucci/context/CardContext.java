@@ -19,4 +19,12 @@ public class CardContext {
     public static void clear() {
         addedProducts.clear();
     }
+
+    public static CartProduct getProductById(String id) {
+        return addedProducts.stream()
+                .filter(p -> p.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
 }

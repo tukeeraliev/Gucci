@@ -29,23 +29,32 @@ public class VerifyAllProductsTest extends BaseWebTest{
                 .clickProductsBtn()
                 .waitForPageLoaded()
                 .verifyProductsListIsVisible()
-                .clickViewProduct1()
+                .clickViewDetailsProduct1()
                 .waitForPageLoaded()
                 .verifyProductDetailsAreVisible(expectedProduct);
     }
 
     @Test
-    @DisplayName("Verify All Products and product detail page")
+    @DisplayName("Search Product")
     @Owner("Tuke")
-    @Tag("TestCase8")
+    @Tag("TestCase9")
     public void searchProductTest(){
         open("", HomePage.class)
                 .waitForPageLoaded()
                 .clickProductsBtn()
                 .waitForPageLoaded()
-                .searchAndPressEnter("blue top")
+                .searchAndPressEnter("top")
                 .waitForPageLoaded()
                 .verifySearchedProductsHeaderVisible()
-                .verifyAllSearchedProductsVisible();
+                .verifyAllSearchedProductsVisible()
+                .hoverAndAddProductByName("Blue Top")
+                .clickContinueShoppingBtn()
+                .hoverAndAddProductByName("Summer White Top")
+                .clickViewCartBtn()
+                .verifyCartMatchesContext()
+                .clickSignupLoginBth()
+                .fillLoginInput("uuii@gmail.com", "1234", HomePage.class)
+                .clickCartBtn()
+                .verifyCartMatchesContext();
     }
 }
