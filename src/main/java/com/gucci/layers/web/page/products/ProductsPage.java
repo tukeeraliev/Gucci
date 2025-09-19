@@ -1,10 +1,10 @@
-package com.gucci.layers.web.page.products_page;
+package com.gucci.layers.web.page.products;
 
 import com.codeborne.selenide.*;
 import com.gucci.context.CardContext;
 import com.gucci.entities.CartProduct;
 import com.gucci.layers.web.page.BasePage;
-import com.gucci.layers.web.page.selections.CartPage;
+import com.gucci.layers.web.page.cart.CartPage;
 import io.qameta.allure.Step;
 import org.openqa.selenium.Keys;
 

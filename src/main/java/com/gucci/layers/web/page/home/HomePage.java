@@ -4,10 +4,13 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import com.gucci.context.CardContext;
+import com.gucci.entities.CartProduct;
 import com.gucci.layers.web.page.BasePage;
-import com.gucci.layers.web.page.selections.CartPage;
+import com.gucci.layers.web.page.products.ProductsDetailsPage;
+import com.gucci.layers.web.page.cart.CartPage;
 import com.gucci.layers.web.page.selections.ContactUsPage;
-import com.gucci.layers.web.page.products_page.ProductsPage;
+import com.gucci.layers.web.page.products.ProductsPage;
 import com.gucci.layers.web.page.selections.TestCasesPage;
 import com.gucci.layers.web.page.signup_login.DeletedAccountPage;
 import com.gucci.layers.web.page.signup_login.LoginPage;
@@ -18,8 +21,9 @@ import org.openqa.selenium.By;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Selectors.byText;
+import static com.codeborne.selenide.Selenide.*;
 
 public class HomePage extends BasePage <HomePage> {
 
@@ -42,11 +46,48 @@ public class HomePage extends BasePage <HomePage> {
     public SelenideElement subscribedAlert = $x("//div[@class='alert-success alert']");
     public SelenideElement cart = $x("//a[@href='/view_cart']/i");
    public SelenideElement footer = $("footer");
+   public SelenideElement productDetailsBtn = $x("(//a[text()='View Product'])[1]");
 
 
     @Override
     public HomePage waitForPageLoaded() {
         homeOrange.shouldHave(Condition.attribute("style", "color: orange;"));
+        return this;
+    }
+
+    public ProductsDetailsPage clickViewProductByName() {
+        elementManager.click(productDetailsBtn);
+        return Selenide.page(ProductsDetailsPage.class);
+    }
+
+    @Step("Hover to product with id {0} and add to cart")
+    public HomePage hoverAndAddProductById(String productId) {
+        SelenideElement productCard = $x("//div[@class='product-image-wrapper'][.//a[@data-product-id='" + productId + "']]");
+
+        String name = productCard.$("p").getText();
+        String price = productCard.$("h2").getText();
+
+        // по умолчанию quantity = 1, total = price
+        CartProduct product = CartProduct.builder()
+                .id(productId)
+                .name(name)
+                .price(price)
+                .quantity("1")
+                .total(price)
+                .build();
+
+        CardContext.addProduct(product);
+
+        elementManager.hoverOver(productCard);
+        elementManager.jsClick(productCard.$("a.add-to-cart"));
+
+        return this;
+    }
+
+    @Step("Click continue shopping button")
+    public HomePage clickContinueShoppingBtn(){
+        SelenideElement continueBtn = $x("//button[text()='Continue Shopping']");
+        elementManager.click(continueBtn);
         return this;
     }
 
@@ -116,7 +157,7 @@ public class HomePage extends BasePage <HomePage> {
 
     @Step("Verify that Logged in as user name is visible {0}")
     public HomePage verifyLoggedInAsUsername(String user){
-        loggedInAsUsernameIsVisible.shouldHave(Condition.text("Logged in as " + user));
+        loggedInAsUsernameIsVisible.shouldHave(text("Logged in as " + user));
         return this;
     }
 
