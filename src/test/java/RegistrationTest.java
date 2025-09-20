@@ -22,7 +22,7 @@ public class RegistrationTest extends BaseWebTest {
         User user = User.builder()
                 .title("Mr")
                 .name("Tuke")                        // 🔥 обязателен для fillName()
-                .email("azabazssaa@gmail.com")
+                .email("azabazssaaaaaaa@gmail.com")
                 .password("1234")
                 .DoB("12/March/2020")
                 .firstName("Tuke")

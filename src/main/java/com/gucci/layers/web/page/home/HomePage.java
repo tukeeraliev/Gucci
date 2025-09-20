@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 
 public class HomePage extends BasePage <HomePage> {
@@ -36,7 +35,7 @@ public class HomePage extends BasePage <HomePage> {
     public SelenideElement homeOrange = $x("//a[@href='/' and contains(@style, 'orange')]");
     public SelenideElement signupLoginBtn = $x("//a[@href='/login']");
     public SelenideElement logoutBtn = $x("//i[@class='fa fa-lock']");
-    public SelenideElement loggedInAsUsernameIsVisible = $x("//a[text()=' Logged in as ']");
+    public SelenideElement loggedInAsUsernameIsVisible = $("a:has(.fa-user)");
     public SelenideElement deleteAccountBtn = $x("//a[@href='/delete_account']");
     public SelenideElement contactUsBtn = $x("//a[normalize-space(text())='Contact us']");
     public SelenideElement testCasesBtn = $x("//a[text()=' Test Cases']");
@@ -50,11 +49,27 @@ public class HomePage extends BasePage <HomePage> {
    public SelenideElement productDetailsBtn = $x("(//a[text()='View Product'])[1]");
     public SelenideElement categoriesSidebar = $x("//div[@id='accordian']");
     public SelenideElement recommendedItemsHeader = $x("//h2[text()='recommended items']");
-
+    public SelenideElement scrollToTopBtn = $x("//i[@class='fa fa-angle-up']");
+    public SelenideElement automationEngineersHeader = $x("//h2[text()='Full-Fledged practice website for Automation Engineers']");
 
     @Override
     public HomePage waitForPageLoaded() {
         homeOrange.shouldHave(Condition.attribute("style", "color: orange;"));
+        return this;
+    }
+
+    @Step("Scroll to top without arrow")
+    public HomePage scrollToTopWithoutArrowAndVerifyHeader() {
+        elementManager.scrollToElement(automationEngineersHeader);
+        automationEngineersHeader.shouldHave(Condition.exactText("Full-Fledged practice website for Automation Engineers"));
+        return this;
+    }
+
+    @Step("scroll to top of page {0} verify automation header is visible")
+    public HomePage scrollToTopAndVerifyAutomationHeaderIsVisible(){
+        scrollToTopBtn.shouldBe(Condition.visible);
+        elementManager.click(scrollToTopBtn);
+        automationEngineersHeader.shouldHave(Condition.exactText("Full-Fledged practice website for Automation Engineers"));
         return this;
     }
 
@@ -201,7 +216,9 @@ public class HomePage extends BasePage <HomePage> {
 
     @Step("Verify that Logged in as user name is visible {0}")
     public HomePage verifyLoggedInAsUsername(String user){
-        loggedInAsUsernameIsVisible.shouldHave(text("Logged in as " + user));
+        $("a:has(.fa-user)")
+                .shouldHave(text("Logged in as"))
+                .shouldHave(text(user));
         return this;
     }
 
